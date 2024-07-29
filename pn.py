@@ -11,11 +11,11 @@ def manhattan_distance(src:int,trg:int) -> int:
     '''Calculates the shortest manhattan route between two points.
     
     param:
-        @src: coordinate of the source of comparison.
-        @trg: coordinate of the target of comparison.
+        `src`: coordinate of the source of comparison.
+        `trg`: coordinate of the target of comparison.
         
     returns
-        shortest route length
+        `distance`: shortest route length
     
     example usage:
         >>> manhattan_distance((0,0),(1,2))
@@ -27,15 +27,15 @@ def random_map_generator(terr_weights:dict={0:.35,1:.25,2:.2,3:.05,4:.1,5:.1},x_
     '''Generates a terrain, sprite, and visibility starting map for the FRUPAL project. Includes the starting placement of the Hero and the Diamonds. Writes the information to a file.
     
     param:
-        @terr_weights: probability weights of different terrains being generated
-        @x_size: the x-axis length of the map
-        @y_size: the y-axis length of the map
-        @file: the file to write the maps to
+        `terr_weights`: probability weights of different terrains being generated
+        `x_size`: the x-axis length of the map
+        `y_size`: the y-axis length of the map
+        `file`: the file to write the maps to
         
     returns
-        @terr_map: generated terrain map
-        @sprt_map: generated sprite map
-        @vsib_map: generated visibility map
+        `terr_map`: generated terrain map
+        `sprt_map`: generated sprite map
+        `vsib_map`: generated visibility map
     
     example usage:
         >>> random_map_generator(x_size=4,y_size=4,file=foo.txt)
@@ -126,38 +126,93 @@ def random_map_generator(terr_weights:dict={0:.35,1:.25,2:.2,3:.05,4:.1,5:.1},x_
     
     return terr_map, sprt_map, vsib_map
 
-def setup_config(energy:int,whiff:int,file,*args) -> bool:
+def setup_config(energy:int,whiffle:int,file,*args) -> bool:
     '''Writes FRUPAL setup configurations into a setup file.
     
     param:
-        @energy: the starting energy for the hero
-        @whiff: the starting whiff for the hero
-        *args: items meant to be carried by the hero
+        `energy`: the starting energy for the hero
+        `whiffle`: the starting whiffle for the hero
+        `*args`: items meant to be carried by the hero
         
     returns
-        true if file was written, otherwise false
+        `True` if file was written, otherwise `False`
     
     example usage:
         >>> setup_config(100,1000,foo.txt,item1,item2,item3)
         True
         >>> cat foo.txt
             """START_ENERGY=100
-            START_WHIFF=1000
+            START_whiffle=1000
             INVENTORY=Item 1, Item 2, Item 3
             """
     '''
-    if not file or energy < 0 or whiff < 0:
+    if not file or energy < 0 or whiffle < 0:
         return False
     
     with open(file,"w") as f:
         f.write(f"START_ENERGY={energy}\n")
-        f.write(f"START_WHIFF={whiff}\n")
+        f.write(f"START_WHIFFLES={whiffle}\n")
         f.write(f"INVENTORY=" + ", ".join(args)+"\n")
 
     return True
 
-# Example usage
-random_map_generator(x_size=20,y_size=20,file="MAP.txt")
-setup_config(100,1000,"SETUP.txt","Item 1","Item 2","Item 3")
+def load_map(sfile,mfile) -> dict:
+    '''Loads setup and map files and returns a dictionary of the gathered data.
+    
+    param:
+        `sfile`: path to setup file
+        `mfile`: path to map file
+    
+    returns
+        dictionary of loaded data
+        `ENERGY`: starting energy
+        `WHIFFLE`: starting whiffles
+        `INVENTORY`: starting inventory
+        `TERRAIN`: terrain layer
+        `SPRITE`: sprite layer
+        `VISIBILITY`: visibility layer
+    
+    example usage:
+        >>> load_map(foo.txt,php.txt)
+        {'ENERGY': '100', 'WHIFFLE': '1000', 
+        'INVENTORY': ['Item 1', 'Item 2', 'Item 3'], 
+        'TERRAIN': [['2', '0'], ['0', '1']],
+        'SPRITE': [['.', '@'], ['.', '.']],
+        'VISIBILITY': [['1', '1'], ['1', '1']]}'''
+    if not sfile or not mfile: return None
+    
+    # Read files into instruction lists
+    with open(sfile, "r") as s, open(mfile,"r") as m:
+        setup_instr = s.read().split("\n")
+        map_instr = m.read().split("\n")
+        s.close()
+        m.close()
+    
+    # Write setup instructions list to data dictionary
+    data = dict()
+    data["ENERGY"] = setup_instr[0].split("START_ENERGY=")[-1]
+    data["WHIFFLE"] = setup_instr[1].split("START_WHIFFLES=")[-1]
+    data["INVENTORY"] = list()
+    for item in setup_instr[2].split("INVENTORY=")[-1].split(", "):
+        data["INVENTORY"].append(item)
+    
+    # Write map instructions list to data dictionary
+    layers:list = ["TERRAIN","SPRITE","VISIBILITY"]
+    layer_cursor:int = 0
+    is_mapping:bool = False
+    for line in map_instr:
+        if len(line) == 0: 
+            is_mapping = False
+            layer_cursor += 1
+        elif is_mapping:
+            data[layers[layer_cursor]].append(list(line))
+        elif line.startswith(layers[layer_cursor]):
+            data[layers[layer_cursor]] = list()
+            is_mapping = True
+    
+    return data
 
-# Next order of business will be to create the load_map function!
+# Example usage
+random_map_generator(x_size=20,y_size=20,file="pn/MAP.txt")
+setup_config(100,1000,"pn/SETUP.txt","Item 1","Item 2","Item 3")
+print(load_map("pn/SETUP.txt","pn/MAP.txt"))
