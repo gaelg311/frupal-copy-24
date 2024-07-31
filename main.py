@@ -1,4 +1,4 @@
-from hero import Hero 
+from hero_object import hero 
 from gamestate import game_logic 
 import tkinter as tk
 import pn as map_loader

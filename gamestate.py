@@ -7,7 +7,7 @@ class game_logic:
         self.window = window
         self.x_cord = 0
         self.y_cord = 0
-        self.hero = Hero()
+        self.hero = hero()
         self.diamond_cords = "(1,2)"
         self.game_over = False 
         self.map_size_x = 5 
