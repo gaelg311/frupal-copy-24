@@ -2,7 +2,7 @@
 # @name     pn.py
 # @author   Pouya Nouri
 # @date     07/24/2024
-# @version  07/27/2024
+# @version  07/31/2024
 # === HEADER ===
 
 import random
@@ -173,6 +173,8 @@ def load_map(sfile,mfile) -> dict:
         `VISIBILITY`: visibility layer
         `HERO_LOC`: heroes location
         `DIAMOND_LOC`: diamond location
+        `Y_BOUNDARY`: y coordinate boundary
+        `X_BOUNDARY`: x coordinate boundary
     
     example usage:
         >>> load_map(foo.txt,php.txt)
@@ -217,8 +219,12 @@ def load_map(sfile,mfile) -> dict:
     # Write Locations of Hero and Diamonds
     for y in range(len(data["SPRITE"])):
         for x in range(len(data["SPRITE"][0])):
-            if data["SPRITE"][y][x] == "@": data["HERO_LOC"] = (x,y)
-            elif data["SPRITE"][y][x] == "*": data["DIAMOND_LOC"] = (x,y)
+            if data["SPRITE"][y][x] == "@": data["HERO_LOC"] = [x,y]
+            elif data["SPRITE"][y][x] == "*": data["DIAMOND_LOC"] = [x,y]
+
+    # Writes boundaries of the Map
+    data["Y_BOUNDARY"] = len(data["TERRAIN"])
+    data["X_BOUNDARY"] = len(data["TERRAIN"][0])
 
     return data
 
