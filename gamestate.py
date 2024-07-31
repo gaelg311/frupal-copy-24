@@ -1,6 +1,6 @@
 import tkinter
-from hero import Hero 
-
+from hero_object import hero 
+import pn as map_loader
 
 class game_logic: 
     def __init__(self, window):

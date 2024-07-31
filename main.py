@@ -1,6 +1,7 @@
 from hero import Hero 
 from gamestate import game_logic 
 import tkinter as tk
+import pn as map_loader
 
 def main():
     sample = tk.Tk() 
