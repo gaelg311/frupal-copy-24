@@ -20,9 +20,10 @@ class hero:
             return False
         return True
     
-    def update_whiffles(self,to_update):
+    def increase_whiffles(self,to_update):
         self.whiffles += to_update
         return True
+    
     
     def update_inventory(self,item_to_add):
         if self.items == 3:
@@ -53,8 +54,12 @@ class hero:
             self.inventory[3] = item_to_add
         
     def buy_tool(self,tool,price):
-        self.update_inventory(tool)
-        self.update_whiffles(-abs(price))
+        if (self.whiffles - price) > -1:
+            self.update_inventory(tool)
+            self.whiffles -= price
+            return True
+        else:
+            return False
         
         
     
