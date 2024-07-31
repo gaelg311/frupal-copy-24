@@ -209,10 +209,16 @@ def load_map(sfile,mfile) -> dict:
         elif line.startswith(layers[layer_cursor]):
             data[layers[layer_cursor]] = list()
             is_mapping = True
-    
+
+    # Write Locations of Hero and Diamonds
+    for y in range(len(data["SPRITE"])):
+        for x in range(len(data["SPRITE"][0])):
+            if data["SPRITE"][y][x] == "@": data["HERO_LOC"] = (x,y)
+            elif data["SPRITE"][y][x] == "*": data["DIAMOND_LOC"] = (x,y)
+
     return data
 
 # Example usage
-random_map_generator(x_size=20,y_size=20,file="pn/MAP.txt")
-setup_config(100,1000,"pn/SETUP.txt","Item 1","Item 2","Item 3")
+#random_map_generator(x_size=20,y_size=20,file="pn/MAP.txt")
+#setup_config(100,1000,"pn/SETUP.txt","Item 1","Item 2","Item 3")
 print(load_map("pn/SETUP.txt","pn/MAP.txt"))
