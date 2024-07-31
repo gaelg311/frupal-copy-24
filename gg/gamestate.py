@@ -10,7 +10,8 @@ class game_logic:
         self.hero = Hero()
         self.diamond_cords = "(1,2)"
         self.game_over = False 
-        self.map_size = 5 
+        self.map_size_x = 5 
+        self.map_size_y = 5
 
         self.cord_header = tkinter.Label(text="Current Position: ("+str(self.x_cord)+","+str(self.y_cord)+")")
         self.energy_header = tkinter.Label(text="Energy: "+str(self.hero.energy))                
@@ -49,6 +50,7 @@ class game_logic:
         self.y_cord += 1
         self.hero.energy -= 1
              
+        self.check_map_edge()     
         self.check_end()
         self.update_labels()
         return
@@ -57,6 +59,7 @@ class game_logic:
         self.x_cord += 1
         self.hero.energy -= 1
 
+        self.check_map_edge()  
         self.check_end()
         self.update_labels()
         return
@@ -65,6 +68,7 @@ class game_logic:
         self.x_cord -= 1
         self.hero.energy -= 1
 
+        self.check_map_edge()  
         self.check_end()
         self.update_labels()
         return
@@ -72,9 +76,24 @@ class game_logic:
     def click_south(self):
         self.y_cord -= 1
         self.hero.energy -= 1
-
+    
+        self.check_map_edge()  
         self.check_end()
         self.update_labels()
+        return
+    
+    def check_map_edge(self):
+        if(self.x_cord >= self.map_size_x):
+            self.x_cord = self.map_size_x
+
+        if(self.x_cord <= 0):
+            self.x_cord = 0
+        
+        if(self.y_cord >= self.map_size_y):
+            self.y_cord = self.map_size_y
+        
+        if(self.y_cord <= 0):
+            self.y_cord = 0
         return
 
     def check_end(self):
