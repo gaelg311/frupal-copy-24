@@ -5,13 +5,14 @@ from pn import load_map, coord_to_string
 class game_logic: 
     def __init__(self, window):
         self.window = window
-        self.x_cord = load_map("pn/SETUP.txt","pn/MAP.txt")["HERO_LOC"][0]
-        self.y_cord = load_map("pn/SETUP.txt","pn/MAP.txt")["HERO_LOC"][1]
+        self.map_data = load_map("pn/SETUP.txt","pn/MAP.txt")
+        self.x_cord = self.map_data["HERO_LOC"][0]
+        self.y_cord = self.map_data["HERO_LOC"][1]
         self.hero = hero()
-        self.diamond_cords = coord_to_string(load_map("pn/SETUP.txt","pn/MAP.txt")["DIAMOND_LOC"])
+        self.diamond_cords = coord_to_string(self.map_data["DIAMOND_LOC"])
         self.game_over = False 
-        self.map_size_x = load_map("pn/SETUP.txt","pn/MAP.txt")["X_BOUNDARY"]
-        self.map_size_y = load_map("pn/SETUP.txt","pn/MAP.txt")["Y_BOUNDARY"]
+        self.map_size_x = self.map_data["X_BOUNDARY"]
+        self.map_size_y = self.map_data["Y_BOUNDARY"]
 
         self.cord_header = tkinter.Label(text="Current Position: ("+str(self.x_cord)+","+str(self.y_cord)+")")
         self.energy_header = tkinter.Label(text="Energy: "+str(self.hero.energy))                
