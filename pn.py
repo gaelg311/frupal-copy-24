@@ -232,3 +232,22 @@ def load_map(sfile,mfile) -> dict:
 #random_map_generator(x_size=20,y_size=20,file="pn/MAP.txt")
 #setup_config(100,1000,"pn/SETUP.txt","Item 1","Item 2","Item 3")
 print(load_map("pn/SETUP.txt","pn/MAP.txt"))
+
+def coord_to_string(coord:list):
+    '''Converts a Frupal coordinate into String format
+    
+    param:
+        `coord`: list coordinate of a location
+    
+    returns:
+        string format of the coordinate
+        
+    example usage:
+        >>> coord:list = [0,1]
+        >>> coord_str:str = coord_to_string(coord)
+        >>> coord_str
+        (0,1)'''
+    if len(coord) != 2 or type(coord[0]) != int or type(coord[1]) != int: return None
+    else: return f"({coord[0]}, {coord[1]})"
+
+print(coord_to_string([0,1]))
