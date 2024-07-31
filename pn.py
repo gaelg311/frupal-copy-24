@@ -219,8 +219,8 @@ def load_map(sfile,mfile) -> dict:
     # Write Locations of Hero and Diamonds
     for y in range(len(data["SPRITE"])):
         for x in range(len(data["SPRITE"][0])):
-            if data["SPRITE"][y][x] == "@": data["HERO_LOC"] = [x,y]
-            elif data["SPRITE"][y][x] == "*": data["DIAMOND_LOC"] = [x,y]
+            if data["SPRITE"][y][x] == "@": data["HERO_LOC"] = [x,len(data["SPRITE"])-y-1]
+            elif data["SPRITE"][y][x] == "*": data["DIAMOND_LOC"] = [x,len(data["SPRITE"])-y-1]
 
     # Writes boundaries of the Map
     data["Y_BOUNDARY"] = len(data["TERRAIN"])
