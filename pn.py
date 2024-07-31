@@ -171,14 +171,18 @@ def load_map(sfile,mfile) -> dict:
         `TERRAIN`: terrain layer
         `SPRITE`: sprite layer
         `VISIBILITY`: visibility layer
+        `HERO_LOC`: heroes location
+        `DIAMOND_LOC`: diamond location
     
     example usage:
         >>> load_map(foo.txt,php.txt)
         {'ENERGY': '100', 'WHIFFLE': '1000', 
         'INVENTORY': ['Item 1', 'Item 2', 'Item 3'], 
         'TERRAIN': [['2', '0'], ['0', '1']],
-        'SPRITE': [['.', '@'], ['.', '.']],
-        'VISIBILITY': [['1', '1'], ['1', '1']]}'''
+        'SPRITE': [['.', '@'], ['*', '.']],
+        'VISIBILITY': [['1', '1'], ['1', '1']]}
+        'HERO_LOC': (0,1)
+        'DIAMOND_LOC': (1,0)'''
     if not sfile or not mfile: return None
     
     # Read files into instruction lists
