@@ -11,15 +11,7 @@ class hero:
         self.items = 0
         #self.diamonds = 0 #Royal Diamond count
     
-    #Update energy, if it runs out it returns False
-    def update_energy(self,to_update) -> bool:
-        try:
-            self.energy += to_update
-            assert self.energy <= 0
-        except:
-            return False
-        return True
-    
+   
     def increase_whiffles(self,to_update):
         self.whiffles += to_update
         return True
