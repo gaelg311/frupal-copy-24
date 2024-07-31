@@ -1,7 +1,7 @@
 from hero_object import hero 
 from gamestate import game_logic 
 import tkinter as tk
-import pn as map_loader
+from pn import load_map, coord_to_string
 
 def main():
     sample = tk.Tk() 

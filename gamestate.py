@@ -1,21 +1,22 @@
 import tkinter
 from hero_object import hero 
-import pn as map_loader
+from pn import load_map, coord_to_string
 
 class game_logic: 
     def __init__(self, window):
         self.window = window
-        self.x_cord = 0
-        self.y_cord = 0
+        self.x_cord = load_map("pn/SETUP.txt","pn/MAP.txt")["HERO_LOC"][0]
+        self.y_cord = load_map("pn/SETUP.txt","pn/MAP.txt")["HERO_LOC"][1]
         self.hero = hero()
-        self.diamond_cords = "(1,2)"
+        self.diamond_cords = coord_to_string(load_map("pn/SETUP.txt","pn/MAP.txt")["DIAMOND_LOC"])
         self.game_over = False 
-        self.map_size_x = 5 
-        self.map_size_y = 5
+        self.map_size_x = load_map("pn/SETUP.txt","pn/MAP.txt")["X_BOUNDARY"]
+        self.map_size_y = load_map("pn/SETUP.txt","pn/MAP.txt")["Y_BOUNDARY"]
 
         self.cord_header = tkinter.Label(text="Current Position: ("+str(self.x_cord)+","+str(self.y_cord)+")")
         self.energy_header = tkinter.Label(text="Energy: "+str(self.hero.energy))                
-        self.whiffel_header = tkinter.Label(text="Whiffels: "+ str(self.hero.whiffels))
+        self.whiffel_header = tkinter.Label(text="Whiffles: "+ str(self.hero.whiffles))
+
 
         self.north_button = tkinter.Button(self.window, text = "NORTH", command=lambda: self.click_north())
         self.east_button = tkinter.Button(self.window, text = "EAST", command=lambda: self.click_east())
@@ -34,7 +35,7 @@ class game_logic:
         if not self.game_over:
             self.cord_header.config(text="Current Position: ("+str(self.x_cord)+","+str(self.y_cord)+")")
             self.energy_header.config(text="Energy: "+str(self.hero.energy))
-            self.whiffel_header.config(text="Whiffels: "+ str(self.hero.whiffels))
+            self.whiffel_header.config(text="Whiffels: "+ str(self.hero.whiffles))
 
             self.cord_header.pack()
             self.energy_header.pack()
@@ -84,13 +85,13 @@ class game_logic:
     
     def check_map_edge(self):
         if(self.x_cord >= self.map_size_x):
-            self.x_cord = self.map_size_x
+            self.x_cord = self.map_size_x - 1
 
         if(self.x_cord <= 0):
             self.x_cord = 0
         
         if(self.y_cord >= self.map_size_y):
-            self.y_cord = self.map_size_y
+            self.y_cord = self.map_size_y - 1 
         
         if(self.y_cord <= 0):
             self.y_cord = 0
