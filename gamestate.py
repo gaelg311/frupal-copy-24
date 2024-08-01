@@ -85,16 +85,16 @@ class game_logic:
     
     def check_map_edge(self):
         if(self.x_cord >= self.map_size_x):
-            self.x_cord = self.map_size_x - 1
-
-        if(self.x_cord <= 0):
             self.x_cord = 0
+
+        if(self.x_cord < 0):
+            self.x_cord = self.map_size_x - 1
         
         if(self.y_cord >= self.map_size_y):
-            self.y_cord = self.map_size_y - 1 
-        
-        if(self.y_cord <= 0):
             self.y_cord = 0
+        
+        if(self.y_cord < 0):
+            self.y_cord = self.map_size_y - 1 
         return
 
     def check_end(self):
