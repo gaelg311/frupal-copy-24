@@ -227,8 +227,8 @@ def load_map(mfile) -> dict:
         cell = map_instr[map_cursor].split(",")[2]
         data["MAP"][int(y)][int(x)] = {
             "S": cell[2:],
-            "T": cell[1],
-            "V": cell[0]
+            "T": int(cell[1]),
+            "V": int(cell[0])
         }
         map_cursor += 1
 
@@ -241,7 +241,7 @@ def load_map(mfile) -> dict:
 # Example usage
 #random_map_generator(x_size=20,y_size=20,file="pn/MAP.txt")
 #setup_config(100,1000,"pn/SETUP.txt","Item 1","Item 2","Item 3")
-print(load_map("pn/MAP.txt"))
+#print(load_map("pn/MAP.txt"))
 
 def coord_to_string(coord:list):
     '''Converts a Frupal coordinate into String format

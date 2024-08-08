@@ -1,18 +1,22 @@
 import tkinter
 from hero_object import hero 
-from pn import load_map, coord_to_string
+from pn import coord_to_string
+from map import Map
 
 class game_logic: 
     def __init__(self, window):
         self.window = window
-        self.map_data = load_map("pn/SETUP.txt","pn/MAP.txt")
-        self.x_cord = self.map_data["HERO_LOC"][0]
-        self.y_cord = self.map_data["HERO_LOC"][1]
+        self.map = Map()
+        self.x_cord = self.map.hero_loc[0]
+        self.y_cord = self.map.hero_loc[1]
+        self.diamond_cords = coord_to_string(self.map.dmd_loc)
+        self.game_over = False
+        self.map_size_x = self.map.size
+        self.map_size_y = self.map.size
+
         self.hero = hero()
-        self.diamond_cords = coord_to_string(self.map_data["DIAMOND_LOC"])
-        self.game_over = False 
-        self.map_size_x = self.map_data["X_BOUNDARY"]
-        self.map_size_y = self.map_data["Y_BOUNDARY"]
+        for item in self.map.hero_inv:
+            self.hero.update_inventory(item)
 
         self.cord_header = tkinter.Label(text="Current Position: ("+str(self.x_cord)+","+str(self.y_cord)+")")
         self.energy_header = tkinter.Label(text="Energy: "+str(self.hero.energy))                
@@ -131,5 +135,3 @@ class game_logic:
     def clear_screen(self):
         for widget in self.window.winfo_children():
             widget.pack_forget()
-
-
