@@ -156,7 +156,7 @@ def setup_config(energy:int,whiffle:int,file,*args) -> bool:
 
     return True
 
-def load_map(sfile,mfile) -> dict:
+def load_map(mfile) -> dict:
     '''Loads setup and map files and returns a dictionary of the gathered data.
     
     param:
@@ -168,9 +168,7 @@ def load_map(sfile,mfile) -> dict:
         `ENERGY`: starting energy
         `WHIFFLE`: starting whiffles
         `INVENTORY`: starting inventory
-        `TERRAIN`: terrain layer
-        `SPRITE`: sprite layer
-        `VISIBILITY`: visibility layer
+        `MAP`: the map with dict cells
         `HERO_LOC`: heroes location
         `DIAMOND_LOC`: diamond location
         `Y_BOUNDARY`: y coordinate boundary
@@ -185,53 +183,65 @@ def load_map(sfile,mfile) -> dict:
         'VISIBILITY': [['1', '1'], ['1', '1']]}
         'HERO_LOC': (0,1)
         'DIAMOND_LOC': (1,0)'''
-    if not sfile or not mfile: return None
+    if not mfile: return None
     
     # Read files into instruction lists
-    with open(sfile, "r") as s, open(mfile,"r") as m:
-        setup_instr = s.read().split("\n")
+    with open(mfile,"r") as m:
         map_instr = m.read().split("\n")
-        s.close()
         m.close()
+
+    if len(map_instr) < 8: raise "Map file not compatible. Must have at least 8 lines."
     
     # Write setup instructions list to data dictionary
     data = dict()
-    data["ENERGY"] = setup_instr[0].split("START_ENERGY=")[-1]
-    data["WHIFFLE"] = setup_instr[1].split("START_WHIFFLES=")[-1]
+    data["ENERGY"] = int(map_instr[4])
+    data["WHIFFLE"] = int(map_instr[5])
     data["INVENTORY"] = list()
-    for item in setup_instr[2].split("INVENTORY=")[-1].split(", "):
+    map_cursor = -1
+    for item in map_instr[7:]:
+        if item == "###": 
+            map_cursor = 8 + len(data["INVENTORY"])
+            break
         data["INVENTORY"].append(item)
     
+    # Writes boundaries of the Map
+    data["Y_BOUNDARY"] = int(map_instr[1])
+    data["X_BOUNDARY"] = int(map_instr[1])
+    
     # Write map instructions list to data dictionary
-    layers:list = ["TERRAIN","SPRITE","VISIBILITY"]
     layer_cursor:int = 0
     is_mapping:bool = False
-    for line in map_instr:
-        if len(line) == 0: 
-            is_mapping = False
-            layer_cursor += 1
-        elif is_mapping:
-            data[layers[layer_cursor]].append(list(line))
-        elif line.startswith(layers[layer_cursor]):
-            data[layers[layer_cursor]] = list()
-            is_mapping = True
+    data["MAP"] = list()
+    for y in range(int(map_instr[1])):
+        data["MAP"].append(list())
+        for x in range(int(map_instr[1])):
+            data["MAP"][y].append({
+                "S": "None",
+                "T": 0,
+                "V": 0
+            })
+
+    # Adjustments to map by custom specifications
+    while map_cursor < len(map_instr):
+        x, y = map_instr[map_cursor].split(",")[:2]
+        cell = map_instr[map_cursor].split(",")[2]
+        data["MAP"][int(y)][int(x)] = {
+            "S": cell[2:],
+            "T": cell[1],
+            "V": cell[0]
+        }
+        map_cursor += 1
 
     # Write Locations of Hero and Diamonds
-    for y in range(len(data["SPRITE"])):
-        for x in range(len(data["SPRITE"][0])):
-            if data["SPRITE"][y][x] == "@": data["HERO_LOC"] = [x,len(data["SPRITE"])-y-1]
-            elif data["SPRITE"][y][x] == "*": data["DIAMOND_LOC"] = [x,len(data["SPRITE"])-y-1]
-
-    # Writes boundaries of the Map
-    data["Y_BOUNDARY"] = len(data["TERRAIN"])
-    data["X_BOUNDARY"] = len(data["TERRAIN"][0])
+    data["HERO_LOC"] = [int(map_instr[3].split(",")[0]),int(map_instr[3].split(",")[1])]
+    data["DIAMOND_LOC"] = [int(map_instr[6].split(",")[0]),int(map_instr[6].split(",")[1])]
 
     return data
 
 # Example usage
 #random_map_generator(x_size=20,y_size=20,file="pn/MAP.txt")
 #setup_config(100,1000,"pn/SETUP.txt","Item 1","Item 2","Item 3")
-#print(load_map("pn/SETUP.txt","pn/MAP.txt"))
+print(load_map("pn/MAP.txt"))
 
 def coord_to_string(coord:list):
     '''Converts a Frupal coordinate into String format
