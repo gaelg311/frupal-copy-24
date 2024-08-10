@@ -4,11 +4,12 @@
 #Still in progress
 
 class hero:
-    def __init__(self):
-        self.energy = 100 #Starting energy
-        self.whiffles = 1000 #Starting whiffles
-        self.inventory = [] #Empty inventory
+    def __init__(self,energy,whiffles,inventory):
+        self.energy = energy #Starting energy
+        self.whiffles = whiffles #Starting whiffles
+        self.inventory = list() # inventory
         self.items = 0
+        for item in inventory: self.update_inventory(item)
         #self.diamonds = 0 #Royal Diamond count
     
    

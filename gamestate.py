@@ -14,7 +14,7 @@ class game_logic:
         self.map_size_x = self.map.size
         self.map_size_y = self.map.size
 
-        self.hero = hero()
+        self.hero = hero(self.map.data["ENERGY"],self.map.data["WHIFFLE"],self.map.data["INVENTORY"])
         for item in self.map.hero_inv:
             self.hero.update_inventory(item)
 
