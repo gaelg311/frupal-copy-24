@@ -7,7 +7,7 @@ class hero:
     def __init__(self,energy,whiffles,inventory):
         self.energy = energy #Starting energy
         self.whiffles = whiffles #Starting whiffles
-        self.inventory = list() # inventory
+        self.inventory = list()  # inventory
         self.items = 0
         for item in inventory: self.update_inventory(item)
         #self.diamonds = 0 #Royal Diamond count
@@ -56,20 +56,4 @@ class hero:
             return False
         
         self.inventory.pop(itm_index)
-        return True
-        
-
-
-
-        
-    
-        
-        
-        
-        
-            
-    
-   
-        
-            
-            
+        return True  
