@@ -63,7 +63,7 @@ class game_logic:
 
     def click_north(self):
         self.y_cord += 1
-        self.hero.energy -= 1
+        self.update_energy()
              
         self.check_map_edge()     
         self.check_end()
@@ -72,7 +72,7 @@ class game_logic:
     
     def click_east(self):
         self.x_cord += 1
-        self.hero.energy -= 1
+        self.update_energy()
 
         self.check_map_edge()  
         self.check_end()
@@ -81,7 +81,7 @@ class game_logic:
     
     def click_west(self):
         self.x_cord -= 1
-        self.hero.energy -= 1
+        self.update_energy()
 
         self.check_map_edge()  
         self.check_end()
@@ -90,7 +90,7 @@ class game_logic:
     
     def click_south(self):
         self.y_cord -= 1
-        self.hero.energy -= 1
+        self.update_energy()
     
         self.check_map_edge()  
         self.check_end()
@@ -110,6 +110,16 @@ class game_logic:
         if(self.y_cord < 0):
             self.y_cord = self.map_size_y - 1 
         return
+    
+    def update_energy(self):
+        cell = self.map.fetch(self.x_cord, self.y_cord)["T"]
+
+        if cell == 0 or cell == 1:
+            self.hero.energy -= 1
+
+        if cell == 4 or cell == 5:
+            self.hero.energy -= 2
+
     
     def check_end(self):
         if(self.hero.energy == 0):
