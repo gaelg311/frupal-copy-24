@@ -7,13 +7,14 @@ Sample Frupal Game Map
 25,25
 Axe
 Axe
+Hatchet
 Shears
 Pretty_Rock
 ###
 12,12,11None
 13,12,01Tree
-14,12,02None
-10,13,04None
+14,12,02Blackberry_Bushes
+10,13,04Boulder
 9,14,05None
 9,15,05None
 15,15,02None

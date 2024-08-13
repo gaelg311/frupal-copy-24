@@ -15,6 +15,7 @@ class game_logic:
         self.game_over = False
         self.map_size_x = self.map.size
         self.map_size_y = self.map.size
+        self.itemUse = False
 
         self.hero = hero(self.map.data["ENERGY"],self.map.data["WHIFFLE"],self.map.data["INVENTORY"])
         for item in self.map.hero_inv:
@@ -41,8 +42,8 @@ class game_logic:
         window.geometry("400x300")
 
     def game_start(self):
-        self.create_buttons()
         self.update_labels()
+        self.create_buttons()
 
     def update_labels(self):
         if not self.game_over:
@@ -53,16 +54,17 @@ class game_logic:
             self.cord_header.pack()
             self.energy_header.pack()
             self.whiffel_header.pack()
-            self.inventory_button.pack()
 
     def create_buttons(self):
         self.north_button.pack()
         self.east_button.pack()
         self.west_button.pack()
         self.south_button.pack()
+        self.inventory_button.pack()
 
     def click_north(self):
         self.y_cord += 1
+        self.obstacle_check()
         self.update_energy()
              
         self.check_map_edge()     
@@ -72,6 +74,7 @@ class game_logic:
     
     def click_east(self):
         self.x_cord += 1
+        self.obstacle_check()
         self.update_energy()
 
         self.check_map_edge()  
@@ -81,6 +84,7 @@ class game_logic:
     
     def click_west(self):
         self.x_cord -= 1
+        self.obstacle_check()
         self.update_energy()
 
         self.check_map_edge()  
@@ -90,6 +94,7 @@ class game_logic:
     
     def click_south(self):
         self.y_cord -= 1
+        self.obstacle_check()
         self.update_energy()
     
         self.check_map_edge()  
@@ -120,9 +125,66 @@ class game_logic:
         if cell == 4 or cell == 5:
             self.hero.energy -= 2
 
+    def obstacle_check(self):
+        obstacle = self.map.fetch(self.x_cord, self.y_cord)["S"]
+        print(obstacle)
+        print(self.hero.inventory)
+
+        if obstacle.upper() == "TREE":
+            self.obstacle_tree()
+        
+        if obstacle.upper() == "BOULDER":
+            self.hero.energy -= 16
+        
+        if obstacle.upper() == "BLACKBERRY_BUSHES":
+            self.hero.energy -= 4
+
+    def obstacle_tree(self):
+        self.itemUse = False
+        if self.hero.check_item("Hatchet") == True and self.itemUse == False:    
+            self.use_item_buttons(8, "Hatchet")
+
+        else:       
+            self.use_item_buttons(10, "None")
+
+    def use_item_buttons(self, energyUse, name):
+        if name == "None":
+            self.hero.energy -= energyUse
+            return
+        
+        self.hide_movement_btns()
+        self.user_item_question = tkinter.Label(text="Do you want to use a " + name)  
+        self.yes_button = tkinter.Button(self.window, text = "Yes", command=lambda: self.assignItemUse(True, energyUse, name))
+        self.no_button = tkinter.Button(self.window, text = "No", command=lambda: self.assignItemUse(False, energyUse, name))
+
+        self.user_item_question.pack()
+        self.yes_button.pack()
+        self.no_button.pack()
+
+    def assignItemUse(self, didUse, energyUse, name):
+        self.itemUse = didUse
+        if didUse == True:
+            self.hero.energy -= energyUse
+            self.hero.use_item(name)
+        
+        self.hide_use_item()
+        self.create_buttons()
+        
+    def hide_use_item(self):
+        self.user_item_question.pack_forget()
+        self.yes_button.pack_forget()
+        self.no_button.pack_forget()
+
+    def hide_movement_btns(self):
+        self.north_button.pack_forget()
+        self.south_button.pack_forget()
+        self.east_button.pack_forget()
+        self.west_button.pack_forget()
     
+
+
     def check_end(self):
-        if(self.hero.energy == 0):
+        if(self.hero.energy <= 0):
             self.energy_depleted_end()
 
         if("("+str(self.x_cord)+","+str(self.y_cord)+")" == self.diamond_cords):

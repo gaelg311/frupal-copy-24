@@ -44,16 +44,17 @@ class hero:
             return True
         else:
             return False
-    
-    def use_item(self,item_needed):
+        
+    def check_item(self,item_needed):
         if len(self.inventory) == 0:
             return False
         
-        itm_index= None
-        try:
-            itm_index = self.inventory.index(item_needed)
-        except:
+        if item_needed in self.inventory:
+            return True
+        else:
             return False
-        
+    
+    def use_item(self,item_needed):
+        itm_index= None
+        itm_index = self.inventory.index(item_needed)
         self.inventory.pop(itm_index)
-        return True  
