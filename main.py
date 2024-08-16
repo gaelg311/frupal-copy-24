@@ -4,7 +4,7 @@ import tkinter as tk
 from pn import load_map, coord_to_string
 
 def main():
-    sample = tk.Tk() 
+    sample = tk.Tk()
     game = game_logic(sample)
 
     game.game_start()

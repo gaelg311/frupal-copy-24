@@ -16,10 +16,11 @@ class game_logic:
         self.map_size_x = self.map.size
         self.map_size_y = self.map.size
         self.itemUse = False
+        self.ask_label = None
+        self.yes_button = None
+        self.no_button = None
 
         self.hero = hero(self.map.data["ENERGY"],self.map.data["WHIFFLE"],self.map.data["INVENTORY"])
-        for item in self.map.hero_inv:
-            self.hero.update_inventory(item)
             
         print(self.hero.inventory)
 
@@ -65,6 +66,7 @@ class game_logic:
     def click_north(self):
         self.y_cord += 1
         self.obstacle_check()
+        self.item_check()
         self.update_energy()
              
         self.check_map_edge()     
@@ -75,6 +77,7 @@ class game_logic:
     def click_east(self):
         self.x_cord += 1
         self.obstacle_check()
+        self.item_check()
         self.update_energy()
 
         self.check_map_edge()  
@@ -85,6 +88,7 @@ class game_logic:
     def click_west(self):
         self.x_cord -= 1
         self.obstacle_check()
+        self.item_check()
         self.update_energy()
 
         self.check_map_edge()  
@@ -95,6 +99,7 @@ class game_logic:
     def click_south(self):
         self.y_cord -= 1
         self.obstacle_check()
+        self.item_check()
         self.update_energy()
     
         self.check_map_edge()  
@@ -124,6 +129,35 @@ class game_logic:
 
         if cell == 4 or cell == 5:
             self.hero.energy -= 2
+        
+    def item_check(self):
+        item = self.map.fetch(self.x_cord, self.y_cord)["S"]
+        print(item)
+
+        if item == "PowerBar": self.shop_item("PowerBar","+20 Energy",1)
+
+    def shop_item(self,item:str,msg:str,cost:int):
+        self.ask_label = tkinter.Label(text=f"Encountered a{"n" if item.lower()[0] in ["a","o","u","y","i"] else ""}" 
+                                    + f" {item} ({msg}), it costs {cost} whiffle{"s" if cost > 1 else ""}.\nBuy it?")
+        self.yes_button = tkinter.Button(self.window, text = "Yes", command=lambda: self.buy_item(item,cost))
+        self.no_button = tkinter.Button(self.window, text = "No", command=lambda: self.dont_buy_item())
+        self.ask_label.pack()
+        self.yes_button.pack(side="right",padx=60)
+        self.no_button.pack(side="left",padx=60)
+
+    def buy_item(self,item:str,cost:int):
+        self.dont_buy_item() # Calling this to delete the buttons and labels
+        if not self.hero.buy_tool(item,cost):
+            self.ask_label = tkinter.Label(text=f"Not enough whiffles to buy that!")
+            self.ask_label.pack()
+        else:
+            self.update_labels()
+            self.map.set(self.x_cord, self.y_cord, "S", "None")
+
+    def dont_buy_item(self):
+        self.ask_label.destroy(), self.yes_button.destroy(), self.no_button.destroy()
+        self.ask_label, self.yes_button, self.no_button = None, None, None
+        
 
     def obstacle_check(self):
         obstacle = self.map.fetch(self.x_cord, self.y_cord)["S"]
@@ -133,10 +167,10 @@ class game_logic:
         if obstacle.upper() == "TREE":
             self.obstacle_tree()
         
-        if obstacle.upper() == "BOULDER":
+        elif obstacle.upper() == "BOULDER":
             self.hero.energy -= 16
         
-        if obstacle.upper() == "BLACKBERRY_BUSHES":
+        elif obstacle.upper() == "BLACKBERRY_BUSHES":
             self.hero.energy -= 4
 
     def obstacle_tree(self):

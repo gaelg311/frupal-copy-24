@@ -39,7 +39,8 @@ class hero:
         
     def buy_tool(self,tool,price):
         if (self.whiffles - price) > -1:
-            self.update_inventory(tool)
+            if (tool == "PowerBar"): self.energy += 20
+            else: self.update_inventory(tool)
             self.whiffles -= price
             return True
         else:

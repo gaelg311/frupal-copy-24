@@ -15,6 +15,7 @@ Pretty_Rock
 13,12,01Tree
 14,12,02Blackberry_Bushes
 10,13,04Boulder
+10,10,00PowerBar
 9,14,05None
 9,15,05None
 15,15,02None

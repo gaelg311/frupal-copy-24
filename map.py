@@ -19,3 +19,9 @@ class Map:
     def fetch(self,x:int,y:int) -> dict:
         if x < 0 or y < 0 or x >= self.size or y >= self.size: return None
         return self.cells[y][x]
+    
+    def set(self,x:int,y:int,layer:str,value):
+        if self.fetch(x,y)[layer] != None:
+            try: self.cells[y][x][layer] = int(value)
+            except: self.cells[y][x][layer] = value
+    
