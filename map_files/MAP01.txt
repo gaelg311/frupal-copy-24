@@ -3,7 +3,7 @@ Sample Frupal Game Map
 ###
 12,12
 103
-0
+1001
 25,25
 Axe
 Axe

@@ -223,6 +223,8 @@ def load_map(mfile) -> dict:
 
     # Adjustments to map by custom specifications
     while map_cursor < len(map_instr):
+        if map_instr[map_cursor] == "": break
+        #print(map_instr[map_cursor].split(","))
         x, y = map_instr[map_cursor].split(",")[:2]
         cell = map_instr[map_cursor].split(",")[2]
         data["MAP"][int(y)][int(x)] = {
