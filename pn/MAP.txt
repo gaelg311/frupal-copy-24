@@ -3,7 +3,7 @@ Sample Frupal Game Map
 ###
 12,12
 103
-1001
+0
 25,25
 Axe
 Axe
@@ -21,3 +21,9 @@ Pretty_Rock
 15,15,02None
 17,16,03None
 17,17,03None
+11,10,00None
+11,11,01None
+11,12,02None
+11,13,03None
+11,14,04None
+11,15,05None

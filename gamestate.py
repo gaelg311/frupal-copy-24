@@ -56,6 +56,10 @@ class game_logic:
             self.energy_header.pack()
             self.whiffel_header.pack()
 
+            if self.ask_label != None:
+                self.ask_label.destroy()
+                self.ask_label = None
+
     def create_buttons(self):
         self.north_button.pack()
         self.east_button.pack()
@@ -66,45 +70,45 @@ class game_logic:
     def click_north(self):
         self.y_cord += 1
         self.obstacle_check()
-        self.item_check()
         self.update_energy()
              
         self.check_map_edge()     
         self.check_end()
         self.update_labels()
+        self.item_check()
         return
     
     def click_east(self):
         self.x_cord += 1
         self.obstacle_check()
-        self.item_check()
         self.update_energy()
 
         self.check_map_edge()  
         self.check_end()
         self.update_labels()
+        self.item_check()
         return
     
     def click_west(self):
         self.x_cord -= 1
         self.obstacle_check()
-        self.item_check()
         self.update_energy()
 
         self.check_map_edge()  
         self.check_end()
         self.update_labels()
+        self.item_check()
         return
     
     def click_south(self):
         self.y_cord -= 1
         self.obstacle_check()
-        self.item_check()
         self.update_energy()
     
         self.check_map_edge()  
         self.check_end()
         self.update_labels()
+        self.item_check()
         return
     
     def check_map_edge(self):
