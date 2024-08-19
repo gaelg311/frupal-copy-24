@@ -136,13 +136,15 @@ class game_logic:
         
     def item_check(self):
         item = self.map.fetch(self.x_cord, self.y_cord)["S"]
-        print(item)
+        details = self.map.fetch_item(item)
 
-        if item == "PowerBar": self.shop_item("PowerBar","+20 Energy",1)
+        if item == "None" or details == None: return None
+        else: return self.shop_item(item,details["info"],details["cost"])
 
     def shop_item(self,item:str,msg:str,cost:int):
         self.ask_label = tkinter.Label(text=f"Encountered a{"n" if item.lower()[0] in ["a","o","u","y","i"] else ""}" 
-                                    + f" {item} ({msg}), it costs {cost} whiffle{"s" if cost > 1 else ""}.\nBuy it?")
+                                    + f" {item} ({msg}), it costs {cost} whiffle{"s" if cost > 1 else ""}.\nBuy it?",
+                                    wraplength=400)
         self.yes_button = tkinter.Button(self.window, text = "Yes", command=lambda: self.buy_item(item,cost))
         self.no_button = tkinter.Button(self.window, text = "No", command=lambda: self.dont_buy_item())
         self.ask_label.pack()

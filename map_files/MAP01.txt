@@ -11,7 +11,7 @@ Hatchet
 Shears
 Pretty_Rock
 ###
-12,12,11None
+12,12,11Shears
 13,12,01Tree
 14,12,02Blackberry_Bushes
 10,13,04Boulder
