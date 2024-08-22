@@ -38,7 +38,11 @@ class game_logic:
         self.inventory_button = tkinter.Button(self.window, text = "Show Inventory", command=lambda: self.toggle_inventory())
         self.inventory_visibility = False 
         self.inventory_frame = None
-
+        
+        #Map labels
+        self.map_grid_labels = [tkinter.Label(self.window, text=""),tkinter.Label(self.window, text=""),tkinter.Label(self.window, text=""),tkinter.Label(self.window, text=""),tkinter.Label(self.window, text="")]
+        self.sprite_grid = None
+        
         window.title("Frupal Test")
         window.geometry("400x300")
 
@@ -51,7 +55,10 @@ class game_logic:
             self.cord_header.config(text="Current Position: ("+str(self.x_cord)+","+str(self.y_cord)+")")
             self.energy_header.config(text="Energy: "+str(self.hero.energy))
             self.whiffel_header.config(text="Whiffels: "+ str(self.hero.whiffles))
-
+            self.update_map_labels()
+            
+            for label in self.map_grid_labels:
+                label.pack()
             self.cord_header.pack()
             self.energy_header.pack()
             self.whiffel_header.pack()
@@ -312,3 +319,40 @@ class game_logic:
         
         self.inventory_button.config(text="Show Inventory")
         self.inventory_visibility = False
+        
+    def get_map(self):
+        
+        grid = []
+        for i in range(self.y_cord+2, self.y_cord-3, -1):
+            curr_row = ""
+            for j in range(self.x_cord-2,self.x_cord+3):
+                curr_cell = self.map.fetch(j,i)
+                if curr_cell is None:
+                    curr_row += " "
+                else:
+                    if curr_cell["V"] == 0:
+                        curr_row += '//'
+                    else:
+                        curr_row += str(curr_cell["T"])
+            grid.append(curr_row)
+        return grid
+    
+    
+    def update_map_labels(self):
+        self.sprite_grid = self.get_map()
+        if self.hero.check_item("Binoculars"):
+            for i in range(5):
+                self.map_grid_labels[i].config(text= self.sprite_grid[i][0] + " " + self.sprite_grid[i][1] + " " + self.sprite_grid[i][2] + " " + self.sprite_grid[i][3] + " " + self.sprite_grid[i][4] + " ")
+            return
+        else:
+            self.map_grid_labels[0].config(text= "X X X X X")
+            self.map_grid_labels[1].config(text= "X "+self.sprite_grid[1][1]+" "+self.sprite_grid[1][2]+" "+self.sprite_grid[1][3]+" X")
+            self.map_grid_labels[2].config(text= "X "+self.sprite_grid[2][1]+" "+self.sprite_grid[2][2]+" "+self.sprite_grid[2][3]+" X")
+            self.map_grid_labels[3].config(text= "X "+self.sprite_grid[3][1]+" "+self.sprite_grid[3][2]+" "+self.sprite_grid[3][3]+" X")
+            self.map_grid_labels[4].config(text= "X X X X X")
+            return
+                
+ 
+        
+                
+                
