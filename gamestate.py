@@ -354,7 +354,7 @@ class game_logic:
                     label = self.label_grid[r][c]
                     label.config(text=cell_text, bg=cell_bg)
 
-                if f"({self.x_cord + c - 2},{self.y_cord + 2 - r})" == self.diamond_cords and cell_text != "#": label.config(text="*")
+                if f"({cell[3][0]},{cell[3][1]})" == self.diamond_cords and cell_text != "#": label.config(text="*")
                 if cell[3] == (self.x_cord, self.y_cord): label.config(text="@")
 
         for r in range(len(self.sprite_grid)):
