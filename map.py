@@ -11,6 +11,8 @@ class Map:
         self.dmd_loc = self.data["DIAMOND_LOC"]
         self.size = self.data["X_BOUNDARY"]
         self.hero_inv = self.data["INVENTORY"]
+        
+        self.update(self.hero_loc[0],self.hero_loc[1],False)
 
     def get_hero_coords(self):
         return self.hero_loc
@@ -26,6 +28,26 @@ class Map:
         if self.fetch(x,y)[layer] != None:
             try: self.cells[y][x][layer] = int(value)
             except: self.cells[y][x][layer] = value
+
+    def get_map(self,x:int,y:int):
+        grid = []
+        for c in range(self.size-1,-1,-1):
+            curr_row = ""
+            for r in range(self.size):
+                curr_cell = self.fetch(r,c)["T"] # Terrain only for now
+                #print(curr_cell,end=" ")
+                if abs(c-y) <= 2 and abs(r-x) <= 2: curr_row += f"{curr_cell}" if self.cells[c][r]["V"] == 1 else "@"
+            if abs(c-y) <= 2: grid.append(curr_row)
+        return grid
+
+    def update(self,x:int,y:int,binoculars:bool):
+        for c in range(self.size):
+            for r in range(self.size):
+                try:
+                    if binoculars and abs(c-y) <= 2 and abs(r-x) <= 2 and self.cells[c][r]["V"] == 0: self.cells[c][r]["V"] = 1
+                    elif abs(c-y) <= 1 and abs(r-x) <= 1 and self.cells[c][r]["V"] == 0: self.cells[c][r]["V"] = 1
+                except: pass
+
     
     def fetch_item(self,item:str="None") -> dict:
         '''A "switch-case" that fetches item info formatted in this manner:
