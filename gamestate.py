@@ -40,11 +40,14 @@ class game_logic:
         self.inventory_frame = None
         
         #Map labels
-        self.map_grid_labels = [tkinter.Label(self.window, text=""),tkinter.Label(self.window, text=""),tkinter.Label(self.window, text=""),tkinter.Label(self.window, text=""),tkinter.Label(self.window, text="")]
-        self.sprite_grid = None
-        
+        self.map_grid_labels = None
+        self.map_window = tkinter.Toplevel(self.window)
+        self.map_window.title("Map Grid")
         window.title("Frupal Test")
-        window.geometry("400x500")
+        window.geometry("400x400")
+
+        self.update_map_labels()
+        self.update_map_labels()
 
     def game_start(self):
         self.update_labels()
@@ -56,9 +59,7 @@ class game_logic:
             self.energy_header.config(text="Energy: "+str(self.hero.energy))
             self.whiffel_header.config(text="Whiffels: "+ str(self.hero.whiffles))
             self.update_map_labels()
-            
-            for label in self.map_grid_labels:
-                label.pack()
+
             self.cord_header.pack()
             self.energy_header.pack()
             self.whiffel_header.pack()
@@ -80,10 +81,10 @@ class game_logic:
 
     def click_north(self):
         self.y_cord += 1
-        self.map.update(self.x_cord,self.y_cord,"Binoculars" in self.hero.inventory)
         self.update_energy()
              
         self.check_map_edge()     
+        self.update_map_labels()
         self.check_end()
         self.update_labels()
         self.obstacle_check()
@@ -92,11 +93,11 @@ class game_logic:
     
     def click_east(self):
         self.x_cord += 1
-        self.map.update(self.x_cord,self.y_cord,"Binoculars" in self.hero.inventory)
         self.update_energy()
 
         self.check_map_edge()  
         self.check_end()
+        self.update_map_labels()
         self.update_labels()
         self.obstacle_check()
         self.item_check()
@@ -104,11 +105,11 @@ class game_logic:
     
     def click_west(self):
         self.x_cord -= 1
-        self.map.update(self.x_cord,self.y_cord,"Binoculars" in self.hero.inventory)
         self.update_energy()
 
         self.check_map_edge()  
         self.check_end()
+        self.update_map_labels()
         self.update_labels()
         self.obstacle_check()
         self.item_check()
@@ -116,11 +117,11 @@ class game_logic:
     
     def click_south(self):
         self.y_cord -= 1
-        self.map.update(self.x_cord,self.y_cord,"Binoculars" in self.hero.inventory)
         self.update_energy()
     
         self.check_map_edge()  
         self.check_end()
+        self.update_map_labels()
         self.update_labels()
         self.obstacle_check()
         self.item_check()
@@ -141,13 +142,15 @@ class game_logic:
         return
     
     def update_energy(self):
-        cell = self.map.fetch(self.x_cord, self.y_cord)["T"]
+        try:
+            cell = self.map.fetch(self.x_cord, self.y_cord)["T"]
 
-        if cell == 0 or cell == 1:
-            self.hero.energy -= 1
+            if cell == 0 or cell == 1:
+                self.hero.energy -= 1
 
-        if cell == 4 or cell == 5:
-            self.hero.energy -= 2
+            if cell == 4 or cell == 5:
+                self.hero.energy -= 2
+        except: pass
         
     def item_check(self):
         item = self.map.fetch(self.x_cord, self.y_cord)["S"]
@@ -235,8 +238,6 @@ class game_logic:
         self.south_button.pack_forget()
         self.east_button.pack_forget()
         self.west_button.pack_forget()
-    
-
 
     def check_end(self):
         if(self.hero.energy <= 0):
@@ -270,7 +271,8 @@ class game_logic:
         
     def clear_screen(self):
         for widget in self.window.winfo_children():
-            widget.pack_forget()
+            try: widget.pack_forget()
+            except: pass
     
 
     def toggle_inventory(self):
@@ -328,23 +330,34 @@ class game_logic:
         self.inventory_button.config(text="Show Inventory")
         self.inventory_visibility = False
     
+    def create_map_labels(self):
+        self.sprite_grid = self.map.get_map(self.x_cord, self.y_cord, self.hero.check_item("Binoculars"))
     
     def update_map_labels(self):
-        self.sprite_grid = self.map.get_map(self.x_cord,self.y_cord)
-        if self.hero.check_item("Binoculars"):
-            for i in range(5):
-                self.map_grid_labels[i].config(text= self.sprite_grid[i][0] + " " + self.sprite_grid[i][1] + " " + self.sprite_grid[i][2] + " " + self.sprite_grid[i][3] + " " + self.sprite_grid[i][4] + " ")
-            return
-        else:
-            #print(self.sprite_grid)
-            self.map_grid_labels[0].config(text= "X X X X X")
-            self.map_grid_labels[1].config(text= "X "+self.sprite_grid[1][1]+" "+self.sprite_grid[1][2]+" "+self.sprite_grid[1][3]+" X")
-            self.map_grid_labels[2].config(text= "X "+self.sprite_grid[2][1]+" "+self.sprite_grid[2][2]+" "+self.sprite_grid[2][3]+" X")
-            self.map_grid_labels[3].config(text= "X "+self.sprite_grid[3][1]+" "+self.sprite_grid[3][2]+" "+self.sprite_grid[3][3]+" X")
-            self.map_grid_labels[4].config(text= "X X X X X")
-            return
-                
- 
-        
-                
-                
+        if not hasattr(self, 'label_grid'):
+            self.label_grid = []
+
+        self.sprite_grid = self.map.get_map(self.x_cord, self.y_cord, self.hero.check_item("Binoculars"))
+        for r in range(len(self.sprite_grid)):
+            if len(self.label_grid) <= r:
+                self.label_grid.append([])
+
+            for c in range(len(self.sprite_grid[r])):
+                cell = self.sprite_grid[r][c]
+                cell_text = "&" if cell[0] in ["Tree", "Blackberry_Bushes", "Boulder"] else "!" if cell[0] == "PowerBar" else "s" if cell[0] == "Shears" else "#" if cell[0] == "BORDER" else "@" if cell[0] == "Player" else "."
+                cell_bg = "#008800" if cell[1] == 0 else "#006600" if cell[1] == 0 else "#00aa00" if cell[1] == 1 else "#7777ff" if cell[1] == 2 else "#aaaaaa" if cell[1] == 3 else "#22ff22" if cell[1] == 4 else "#11ff33" if cell[1] == 5 else "gray"
+                if len(self.label_grid[r]) <= c:
+                    label = tkinter.Label(self.map_window, text=cell_text, borderwidth=1, font=("Courier", 12), bg=cell_bg)
+                    label.grid(row=r, column=c, padx=1, pady=1, sticky="nsew")
+                    self.label_grid[r].append(label)
+                else:
+                    label = self.label_grid[r][c]
+                    label.config(text=cell_text, bg=cell_bg)
+
+                if f"({self.x_cord + c - 2},{self.y_cord + 2 - r})" == self.diamond_cords and cell_text != "#": label.config(text="*")
+                if cell[3] == (self.x_cord, self.y_cord): label.config(text="@")
+
+        for r in range(len(self.sprite_grid)):
+            self.map_window.grid_rowconfigure(r, weight=1)
+            self.map_window.grid_columnconfigure(r, weight=1)
+
