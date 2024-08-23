@@ -44,7 +44,7 @@ class game_logic:
         self.sprite_grid = None
         
         window.title("Frupal Test")
-        window.geometry("400x300")
+        window.geometry("400x500")
 
     def game_start(self):
         self.update_labels()
@@ -66,6 +66,10 @@ class game_logic:
             if self.ask_label != None:
                 self.ask_label.destroy()
                 self.ask_label = None
+            if self.no_button != None:
+                self.no_button.destroy()
+                self.yes_button.destroy()
+                self.no_button, self.yes_button = None, None
 
     def create_buttons(self):
         self.north_button.pack()
@@ -76,45 +80,49 @@ class game_logic:
 
     def click_north(self):
         self.y_cord += 1
-        self.obstacle_check()
+        self.map.update(self.x_cord,self.y_cord,"Binoculars" in self.hero.inventory)
         self.update_energy()
              
         self.check_map_edge()     
         self.check_end()
         self.update_labels()
+        self.obstacle_check()
         self.item_check()
         return
     
     def click_east(self):
         self.x_cord += 1
-        self.obstacle_check()
+        self.map.update(self.x_cord,self.y_cord,"Binoculars" in self.hero.inventory)
         self.update_energy()
 
         self.check_map_edge()  
         self.check_end()
         self.update_labels()
+        self.obstacle_check()
         self.item_check()
         return
     
     def click_west(self):
         self.x_cord -= 1
-        self.obstacle_check()
+        self.map.update(self.x_cord,self.y_cord,"Binoculars" in self.hero.inventory)
         self.update_energy()
 
         self.check_map_edge()  
         self.check_end()
         self.update_labels()
+        self.obstacle_check()
         self.item_check()
         return
     
     def click_south(self):
         self.y_cord -= 1
-        self.obstacle_check()
+        self.map.update(self.x_cord,self.y_cord,"Binoculars" in self.hero.inventory)
         self.update_energy()
     
         self.check_map_edge()  
         self.check_end()
         self.update_labels()
+        self.obstacle_check()
         self.item_check()
         return
     
@@ -319,32 +327,16 @@ class game_logic:
         
         self.inventory_button.config(text="Show Inventory")
         self.inventory_visibility = False
-        
-    def get_map(self):
-        
-        grid = []
-        for i in range(self.y_cord+2, self.y_cord-3, -1):
-            curr_row = ""
-            for j in range(self.x_cord-2,self.x_cord+3):
-                curr_cell = self.map.fetch(j,i)
-                if curr_cell is None:
-                    curr_row += " "
-                else:
-                    if curr_cell["V"] == 0:
-                        curr_row += '//'
-                    else:
-                        curr_row += str(curr_cell["T"])
-            grid.append(curr_row)
-        return grid
     
     
     def update_map_labels(self):
-        self.sprite_grid = self.get_map()
+        self.sprite_grid = self.map.get_map(self.x_cord,self.y_cord)
         if self.hero.check_item("Binoculars"):
             for i in range(5):
                 self.map_grid_labels[i].config(text= self.sprite_grid[i][0] + " " + self.sprite_grid[i][1] + " " + self.sprite_grid[i][2] + " " + self.sprite_grid[i][3] + " " + self.sprite_grid[i][4] + " ")
             return
         else:
+            #print(self.sprite_grid)
             self.map_grid_labels[0].config(text= "X X X X X")
             self.map_grid_labels[1].config(text= "X "+self.sprite_grid[1][1]+" "+self.sprite_grid[1][2]+" "+self.sprite_grid[1][3]+" X")
             self.map_grid_labels[2].config(text= "X "+self.sprite_grid[2][1]+" "+self.sprite_grid[2][2]+" "+self.sprite_grid[2][3]+" X")
