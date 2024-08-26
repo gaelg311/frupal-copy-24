@@ -19,7 +19,7 @@ class game_logic:
         self.ask_label = None
         self.yes_button = None
         self.no_button = None
-
+        
         self.hero = hero(self.map.data["ENERGY"],self.map.data["WHIFFLE"],self.map.data["INVENTORY"])
             
         print(self.hero.inventory)
@@ -89,6 +89,8 @@ class game_logic:
         self.update_labels()
         self.obstacle_check()
         self.item_check()
+        if(self.inventory_visibility == True):
+            self.hide_inventory()
         return
     
     def click_east(self):
@@ -101,6 +103,8 @@ class game_logic:
         self.update_labels()
         self.obstacle_check()
         self.item_check()
+        if(self.inventory_visibility == True):
+            self.hide_inventory()
         return
     
     def click_west(self):
@@ -113,6 +117,8 @@ class game_logic:
         self.update_labels()
         self.obstacle_check()
         self.item_check()
+        if(self.inventory_visibility == True):
+            self.hide_inventory()
         return
     
     def click_south(self):
@@ -125,6 +131,8 @@ class game_logic:
         self.update_labels()
         self.obstacle_check()
         self.item_check()
+        if(self.inventory_visibility == True):
+            self.hide_inventory()
         return
     
     def check_map_edge(self):
@@ -195,6 +203,7 @@ class game_logic:
             self.hero.energy -= 16
         
         elif obstacle.upper() == "BLACKBERRY_BUSHES":
+
             self.hero.energy -= 4
 
     def obstacle_tree(self):
@@ -287,10 +296,10 @@ class game_logic:
         
         #start by allocating the inventory frame, immediatly pack 
         self.inventory_frame = tkinter.Frame(self.window)
-        self.inventory_frame.pack()
+        self.inventory_frame.pack(side="bottom")
 
         #create a canvas based on the inventory frame
-        canvas = tkinter.Canvas(self.inventory_frame)
+        canvas = tkinter.Canvas(self.inventory_frame, width=350, height=200)
 
         #use ttk to create a scrollbar widget and scrollable frame to display 
         scrollbar = ttk.Scrollbar(self.inventory_frame, orient="vertical", command=canvas.yview)
@@ -315,20 +324,24 @@ class game_logic:
         #populate using hero inventory
         for item in self.hero.inventory:
             item_label = tkinter.Label(scrollable_frame, text = str(item))
-            item_label.pack()
+            item_label.pack(anchor="center", pady=2)
+        canvas.update_idletasks()
+
 
         #update button to "hide inventory"
         self.inventory_button.config(text= "Hide Inventory")
         self.inventory_visibility = True
 
+
     def hide_inventory(self):
         #hide the inventory by removing the inventory frame 
         if self.inventory_frame:
             self.inventory_frame.destroy()
-            self.inventory_button = None
+            self.inventory_frame = None
         
-        self.inventory_button.config(text="Show Inventory")
-        self.inventory_visibility = False
+        if self.inventory_button: 
+            self.inventory_button.config(text="Show Inventory")
+            self.inventory_visibility = False
     
     def create_map_labels(self):
         self.sprite_grid = self.map.get_map(self.x_cord, self.y_cord, self.hero.check_item("Binoculars"))
