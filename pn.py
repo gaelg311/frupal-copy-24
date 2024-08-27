@@ -226,13 +226,19 @@ def load_map(mfile) -> dict:
         if map_instr[map_cursor] == "": break
         #print(map_instr[map_cursor].split(","))
         x, y = map_instr[map_cursor].split(",")[:2]
+        x = int(x)-1
+        y = int(y)-1
         cell = map_instr[map_cursor].split(",")[2]
-        data["MAP"][int(y)][int(x)] = {
-            "S": cell[2:],
-            "T": int(cell[1]),
-            "V": int(cell[0])
-        }
-        map_cursor += 1
+        try:
+            data["MAP"][int(y)][int(x)] = {
+                "S": cell[2:],
+                "T": int(cell[1]),
+                "V": int(cell[0])
+            }
+            map_cursor += 1
+        except:
+            print(map_cursor,x,y,len(data["MAP"]),"x",len(data["MAP"][0]))
+            raise f"Map loading failed at line {map_cursor}"
 
     # Write Locations of Hero and Diamonds
     data["HERO_LOC"] = [int(map_instr[3].split(",")[0]),int(map_instr[3].split(",")[1])]

@@ -1,6 +1,6 @@
 import pn
 
-FILE:str = "map_files/MAP01.txt"
+FILE:str = "map_files/map.txt"#MAP01.txt"
 
 class Map:
 
@@ -27,9 +27,11 @@ class Map:
             try: self.cells[y][x][layer] = int(value)
             except: self.cells[y][x][layer] = value
 
-    def get_map(self,x:int,y:int,binoculars:bool):
+    def get_map(self, x: int, y: int, binoculars: bool):
         RADIUS = 10
         grid = []
+        
+        # Calculate visible bounds based on player's position
         max_r = min(y + RADIUS, self.size - 1)
         min_r = max(y - RADIUS, 0)
         max_c = min(x + RADIUS, self.size - 1)
@@ -39,19 +41,24 @@ class Map:
             row = []
             for c in range(min_c, max_c + 1):
                 try:
-                    curr_cell = [self.fetch(c, r)["S"], self.fetch(c, r)["T"], self.fetch(c, r)["V"], (c,r)]
+                    curr_cell = [self.fetch(c, r)["S"], self.fetch(c, r)["T"], self.fetch(c, r)["V"], (c, r)]
                 except:
-                    curr_cell = ["BORDER", -1, 0, (c,r)]
+                    curr_cell = ["BORDER", -1, 0, (c, r)]
+                
                 if abs(r - y) <= 2 and abs(c - x) <= 2 and binoculars:
                     self.cells[r][c]["V"] = 1
                 elif abs(r - y) <= 1 and abs(c - x) <= 1:
                     self.cells[r][c]["V"] = 1
+                
                 if curr_cell[2] != 1:
-                    curr_cell = ["BORDER", -1, 0, (c,r)]
+                    curr_cell = ["BORDER", -1, 0, (c, r)]
                 row.append(curr_cell)
+            
             grid.append(row)
 
+        print(grid)
         return grid
+
 
     def fetch_item(self,item:str="None") -> dict:
         '''A "switch-case" that fetches item info formatted in this manner:

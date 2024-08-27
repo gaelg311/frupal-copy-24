@@ -80,7 +80,7 @@ class game_logic:
         self.inventory_button.pack()
 
     def click_north(self):
-        self.y_cord += 1
+        self.y_cord += self.validate_movement(0,1)
         self.update_energy()
              
         self.check_map_edge()     
@@ -94,7 +94,7 @@ class game_logic:
         return
     
     def click_east(self):
-        self.x_cord += 1
+        self.x_cord += self.validate_movement(1,0)
         self.update_energy()
 
         self.check_map_edge()  
@@ -108,7 +108,7 @@ class game_logic:
         return
     
     def click_west(self):
-        self.x_cord -= 1
+        self.x_cord -= self.validate_movement(-1,0)
         self.update_energy()
 
         self.check_map_edge()  
@@ -122,7 +122,7 @@ class game_logic:
         return
     
     def click_south(self):
-        self.y_cord -= 1
+        self.y_cord -= self.validate_movement(0,-1)
         self.update_energy()
     
         self.check_map_edge()  
@@ -189,7 +189,16 @@ class game_logic:
     def dont_buy_item(self):
         self.ask_label.destroy(), self.yes_button.destroy(), self.no_button.destroy()
         self.ask_label, self.yes_button, self.no_button = None, None, None
-        
+
+    def validate_movement(self,dx:int,dy:int) -> int:
+        x = 0 if self.x_cord + dx == self.map_size_x else self.map_size_x-1 if self.x_cord + dx < 0 else self.x_cord + dx
+        y = 0 if self.y_cord + dy == self.map_size_y else self.map_size_y-1 if self.y_cord + dy < 0 else self.y_cord + dy
+        terrain = self.map.fetch(x, y)["T"]
+        if terrain == 3 or terrain == 2 and not self.hero.check_item("Boat"):
+            return 0
+        else:
+            return 1
+
 
     def obstacle_check(self):
         obstacle = self.map.fetch(self.x_cord, self.y_cord)["S"]
@@ -221,14 +230,14 @@ class game_logic:
         
         self.hide_movement_btns()
         self.user_item_question = tkinter.Label(text="Do you want to use a " + name)  
-        self.yes_button = tkinter.Button(self.window, text = "Yes", command=lambda: self.assignItemUse(True, energyUse, name))
-        self.no_button = tkinter.Button(self.window, text = "No", command=lambda: self.assignItemUse(False, energyUse, name))
+        self.yes_button = tkinter.Button(self.window, text = "Yes", command=lambda: self.assign_item_use(True, energyUse, name))
+        self.no_button = tkinter.Button(self.window, text = "No", command=lambda: self.assign_item_use(False, energyUse, name))
 
         self.user_item_question.pack()
         self.yes_button.pack()
         self.no_button.pack()
 
-    def assignItemUse(self, didUse, energyUse, name):
+    def assign_item_use(self, didUse, energyUse, name):
         self.itemUse = didUse
         if didUse == True:
             self.hero.energy -= energyUse
@@ -350,14 +359,21 @@ class game_logic:
         if not hasattr(self, 'label_grid'):
             self.label_grid = []
 
+        else:
+            for i in range(len(self.label_grid)):
+                for j in range(len(self.label_grid[0])):
+                    if self.label_grid[i][j].cget("text") != "#": 
+                        self.label_grid[i][j].config(text="#", bg="gray")
+
         self.sprite_grid = self.map.get_map(self.x_cord, self.y_cord, self.hero.check_item("Binoculars"))
+
         for r in range(len(self.sprite_grid)):
             if len(self.label_grid) <= r:
                 self.label_grid.append([])
 
             for c in range(len(self.sprite_grid[r])):
                 cell = self.sprite_grid[r][c]
-                cell_text = "&" if cell[0] in ["Tree", "Blackberry_Bushes", "Boulder"] else "!" if cell[0] == "PowerBar" else "s" if cell[0] == "Shears" else "#" if cell[0] == "BORDER" else "@" if cell[0] == "Player" else "."
+                cell_text = "&" if cell[0] in ["Tree", "Blackberry_Bushes", "Boulder"] else "!" if cell[0] == "PowerBar" else "s" if cell[0] == "Shears" else "a" if cell[0] == "Axe" else "c" if cell[0] == "Chainsaw" else "b" if cell[0] == "Boat" else "#" if cell[0] == "BORDER" else "@" if cell[0] == "Player" else "."
                 cell_bg = "#008800" if cell[1] == 0 else "#006600" if cell[1] == 0 else "#00aa00" if cell[1] == 1 else "#7777ff" if cell[1] == 2 else "#aaaaaa" if cell[1] == 3 else "#22ff22" if cell[1] == 4 else "#11ff33" if cell[1] == 5 else "gray"
                 if len(self.label_grid[r]) <= c:
                     label = tkinter.Label(self.map_window, text=cell_text, borderwidth=1, font=("Courier", 12), bg=cell_bg)
@@ -373,4 +389,3 @@ class game_logic:
         for r in range(len(self.sprite_grid)):
             self.map_window.grid_rowconfigure(r, weight=1)
             self.map_window.grid_columnconfigure(r, weight=1)
-
