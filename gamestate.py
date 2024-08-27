@@ -373,7 +373,9 @@ class game_logic:
 
             for c in range(len(self.sprite_grid[r])):
                 cell = self.sprite_grid[r][c]
-                cell_text = "&" if cell[0] in ["Tree", "Blackberry_Bushes", "Boulder"] else "!" if cell[0] == "PowerBar" else "s" if cell[0] == "Shears" else "a" if cell[0] == "Axe" else "c" if cell[0] == "Chainsaw" else "b" if cell[0] == "Boat" else "#" if cell[0] == "BORDER" else "@" if cell[0] == "Player" else "."
+                cell_text = ("&" if cell[0] in ["Tree", "Blackberry_Bushes", "Boulder"] else "!" if cell[0] == "PowerBar" else "s" if cell[0] == "Shears" else "c" if cell[0] == "Chisel" else "S" if cell[0] == "Sledge" else "M" if cell[0] == "Machete" else
+                             "a" if cell[0] == "Axe" else "C" if cell[0] == "Chainsaw" else "b" if cell[0] == "Boat" else "B" if cell[0] == "Binoculars" else "h" if cell[0] == "Hatchet" else "j" if cell[0] == "Jackhammer" else
+                             "#" if cell[0] == "BORDER" else "@" if cell[0] == "Player" else ".")
                 cell_bg = "#008800" if cell[1] == 0 else "#006600" if cell[1] == 0 else "#00aa00" if cell[1] == 1 else "#7777ff" if cell[1] == 2 else "#aaaaaa" if cell[1] == 3 else "#22ff22" if cell[1] == 4 else "#11ff33" if cell[1] == 5 else "gray"
                 if len(self.label_grid[r]) <= c:
                     label = tkinter.Label(self.map_window, text=cell_text, borderwidth=1, font=("Courier", 12), bg=cell_bg)
