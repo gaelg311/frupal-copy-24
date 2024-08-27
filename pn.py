@@ -241,8 +241,8 @@ def load_map(mfile) -> dict:
             raise f"Map loading failed at line {map_cursor}"
 
     # Write Locations of Hero and Diamonds
-    data["HERO_LOC"] = [int(map_instr[3].split(",")[0]),int(map_instr[3].split(",")[1])]
-    data["DIAMOND_LOC"] = [int(map_instr[6].split(",")[0]),int(map_instr[6].split(",")[1])]
+    data["HERO_LOC"] = [int(map_instr[3].split(",")[0])-1,int(map_instr[3].split(",")[1])-1]
+    data["DIAMOND_LOC"] = [int(map_instr[6].split(",")[0])-1,int(map_instr[6].split(",")[1])-1]
 
     return data
 

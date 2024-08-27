@@ -56,7 +56,7 @@ class Map:
             
             grid.append(row)
 
-        print(grid)
+        #print(grid)
         return grid
 
 

@@ -55,7 +55,7 @@ class game_logic:
 
     def update_labels(self):
         if not self.game_over:
-            self.cord_header.config(text="Current Position: ("+str(self.x_cord)+","+str(self.y_cord)+")")
+            self.cord_header.config(text="Current Position: ("+str(self.x_cord+1)+","+str(self.y_cord+1)+")")
             self.energy_header.config(text="Energy: "+str(self.hero.energy))
             self.whiffel_header.config(text="Whiffels: "+ str(self.hero.whiffles))
             self.update_map_labels()
