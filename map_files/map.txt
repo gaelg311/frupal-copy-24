@@ -6,6 +6,9 @@ Frupal 25x25 Map
 1000
 20,20
 Axe
+Hatchet
+Chainsaw
+Jackhammer
 Binoculars
 Shears
 ###
@@ -323,9 +326,9 @@ Shears
 12,13,00None
 13,13,00Tree
 14,13,00None
-15,13,00None
+15,13,00Blackberry_Bushes
 16,13,00None
-17,13,00None
+17,13,00Boulder
 18,13,00None
 19,13,00None
 20,13,00None

@@ -189,6 +189,7 @@ class game_logic:
     def dont_buy_item(self):
         self.ask_label.destroy(), self.yes_button.destroy(), self.no_button.destroy()
         self.ask_label, self.yes_button, self.no_button = None, None, None
+        self.itemUse = False
 
     def validate_movement(self,dx:int,dy:int) -> int:
         x = 0 if self.x_cord + dx == self.map_size_x else self.map_size_x-1 if self.x_cord + dx < 0 else self.x_cord + dx
@@ -202,60 +203,65 @@ class game_logic:
 
     def obstacle_check(self):
         obstacle = self.map.fetch(self.x_cord, self.y_cord)["S"]
-        print(obstacle)
         print(self.hero.inventory)
+        self.current_item_index = 0
+        self.itemUse = False
 
         if obstacle.upper() == "TREE":
-            self.obstacle_tree()
+            self.items_to_check = [("Hatchet", 8), ("Axe", 6), ("Chainsaw", 2)]
+            self.obstacle_removal(10)
+            self.map.fetch(self.x_cord, self.y_cord)["S"] = "None"
         
         elif obstacle.upper() == "BOULDER":
-            self.hero.energy -= 16
+            self.items_to_check = [("Chisel", 15), ("Sledge", 12), ("Jackhammer", 4)]
+            self.obstacle_removal(16)
+            self.map.fetch(self.x_cord, self.y_cord)["S"] = "None"
         
         elif obstacle.upper() == "BLACKBERRY_BUSHES":
+            self.items_to_check = [("Machete", 2), ("Shears", 2)]
+            self.obstacle_removal(4)
+            self.map.fetch(self.x_cord, self.y_cord)["S"] = "None"
 
-            self.hero.energy -= 4
 
-    def obstacle_tree(self):
-        self.itemUse = False
-        if self.hero.check_item("Hatchet") == True and self.itemUse == False:    
-            self.use_item_buttons(8, "Hatchet")
+    def obstacle_removal(self, default):
+        if self.current_item_index < len(self.items_to_check):
+            item, cost = self.items_to_check[self.current_item_index]
+            if self.hero.check_item(item) and not self.itemUse:
+                self.ask_use_item(item, cost, default)
+            else:
+                self.current_item_index += 1
+                self.obstacle_removal(default)
+        else:
+            self.hero.energy -= default
+            self.update_labels()
 
-        else:       
-            self.use_item_buttons(10, "None")
 
-    def use_item_buttons(self, energyUse, name):
-        if name == "None":
-            self.hero.energy -= energyUse
-            return
-        
-        self.hide_movement_btns()
-        self.user_item_question = tkinter.Label(text="Do you want to use a " + name)  
-        self.yes_button = tkinter.Button(self.window, text = "Yes", command=lambda: self.assign_item_use(True, energyUse, name))
-        self.no_button = tkinter.Button(self.window, text = "No", command=lambda: self.assign_item_use(False, energyUse, name))
+    
+    def ask_use_item(self, item, cost, default):
+        self.ques_label = tkinter.Label(text="You have a " + item + ". Would you like to use it?", wraplength=400)
+        self.use_button = tkinter.Button(self.window, text = "Yes", command=lambda: self.yes_item(item,cost))
+        self.dont_button = tkinter.Button(self.window, text = "No", command=lambda: self.no_item(default))
+        self.ques_label.pack()
+        self.use_button.pack(side="right",padx=60)
+        self.dont_button.pack(side="left",padx=60)
 
-        self.user_item_question.pack()
-        self.yes_button.pack()
-        self.no_button.pack()
+    def yes_item(self, item, cost):
+        self.dont_use_item()
+        self.hero.use_item(item)
+        self.hero.energy -= cost
+        self.itemUse = True
+        self.update_labels()
 
-    def assign_item_use(self, didUse, energyUse, name):
-        self.itemUse = didUse
-        if didUse == True:
-            self.hero.energy -= energyUse
-            self.hero.use_item(name)
-        
-        self.hide_use_item()
-        self.create_buttons()
-        
-    def hide_use_item(self):
-        self.user_item_question.pack_forget()
-        self.yes_button.pack_forget()
-        self.no_button.pack_forget()
+    def no_item(self, default):
+        self.dont_use_item()
+        self.current_item_index += 1
+        self.obstacle_removal(default)
 
-    def hide_movement_btns(self):
-        self.north_button.pack_forget()
-        self.south_button.pack_forget()
-        self.east_button.pack_forget()
-        self.west_button.pack_forget()
+    def dont_use_item(self):
+        self.ques_label.destroy(), self.use_button.destroy(), self.dont_button.destroy()
+        self.ques_label, self.use_button, self.dont_button = None, None, None
+        self.itemUse = False        
+
 
     def check_end(self):
         if(self.hero.energy <= 0):
