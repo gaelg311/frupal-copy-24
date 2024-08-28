@@ -6,9 +6,9 @@ from map import Map
 
 
 class game_logic: 
-    def __init__(self, window):
+    def __init__(self, window, file:str=None):
         self.window = window
-        self.map = Map()
+        self.map = Map(file)
         self.x_cord = self.map.hero_loc[0]
         self.y_cord = self.map.hero_loc[1]
         self.diamond_cords = coord_to_string(self.map.dmd_loc)

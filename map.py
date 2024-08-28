@@ -1,11 +1,11 @@
 import pn
 
-FILE:str = "map_files/map.txt"#MAP01.txt"
+FILE:str = "map_files/GameMap25.txt"#MAP01.txt"
 
 class Map:
 
-    def __init__(self):
-        self.data = pn.load_map(FILE)
+    def __init__(self, file:str=None):
+        self.data = pn.load_map(FILE if file == None else file)
         self.cells = self.data["MAP"] # 2D List Array with Dict cells
         self.hero_loc = self.data["HERO_LOC"]
         self.dmd_loc = self.data["DIAMOND_LOC"]

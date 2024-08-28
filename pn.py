@@ -2,7 +2,7 @@
 # @name     pn.py
 # @author   Pouya Nouri
 # @date     07/24/2024
-# @version  07/31/2024
+# @version  08/26/2024
 # === HEADER ===
 
 import random
